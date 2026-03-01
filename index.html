@@ -176,9 +176,9 @@
             text-align: center;
         }
 
-        .cover-title { font-size: 6.5rem; font-weight: 900; line-height: 1; margin-bottom: 5px; letter-spacing: 2px;}
-        .cover-subtitle { font-size: 2.5rem; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px;}
-        .cover-small-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 25px; letter-spacing: 1px;}
+        .cover-title { font-size: 6.5rem; font-weight: 900; line-height: 1; margin-bottom: 20px; letter-spacing: 2px;}
+        .cover-ded-type { font-size: 2rem; font-weight: bold; margin-bottom: 5px; letter-spacing: 1px;}
+        .cover-name { font-size: 3.5rem; font-weight: bold; margin-bottom: 25px; letter-spacing: 1px;}
         
         .cover-ornament { 
             width: 80px; height: 15px; margin-bottom: 40px;
@@ -186,9 +186,6 @@
             filter: drop-shadow(2px 3px 2px rgba(0,0,0,1));
         }
         
-        .cover-ded-type { font-size: 1.6rem; color: #888; margin-top: auto; filter: none; -webkit-text-fill-color: #888; text-shadow: 1px 1px 3px #000;}
-        .cover-name { font-size: 2.2rem; font-weight: bold; margin-top: 5px; }
-
         .cover-page::after, .back-cover-page::after {
             content: ''; position: absolute; bottom: -30px; left: 5%; right: 5%; height: 20px;
             background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, transparent 70%); z-index: -1;
@@ -203,7 +200,6 @@
 
         /* --- שער פנימי והקדשה --- */
         .gate-title { font-size: 4.5rem; text-align: center; font-family: 'Frank Ruhl Libre', serif; color: var(--ink); font-weight: 900; margin-top: 20px; }
-        .gate-subtitle { font-size: 2rem; text-align: center; font-family: 'Frank Ruhl Libre', serif; color: #444; margin-top: 5px; }
         .gate-divider { text-align: center; font-size: 2.5rem; color: var(--torah-red); margin: 20px 0; }
         .gate-name { text-align: center; font-size: 4rem; color: var(--torah-red); font-weight: bold; font-family: 'Frank Ruhl Libre', serif; }
         .gate-custom-text { text-align: center; font-size: 1.4rem; color: var(--ink); font-family: 'Heebo', sans-serif; margin-top: 25px; line-height: 1.5; padding: 0 40px;}
@@ -217,51 +213,31 @@
 
         /* ================== התאמה למובייל (עיצוב רספונסיבי) ================== */
         @media (max-width: 768px) {
-            /* עיצוב הטופס בטלפון */
             #builder-screen {
                 margin: 15px;
                 padding: 25px 20px;
             }
-            .builder-header h1 {
-                font-size: 2.2rem;
-            }
-            .section-title {
-                font-size: 1.3rem;
-                margin: 20px 0 15px 0;
-            }
-            .grid-2 {
-                grid-template-columns: 1fr; /* הפיכה לעמודה אחת */
-                gap: 15px;
-            }
-            .btn-silver {
-                font-size: 1.3rem;
-                padding: 15px;
-            }
+            .builder-header h1 { font-size: 2.2rem; }
+            .section-title { font-size: 1.3rem; margin: 20px 0 15px 0; }
+            .grid-2 { grid-template-columns: 1fr; gap: 15px; }
+            .btn-silver { font-size: 1.3rem; padding: 15px; }
 
-            /* עיצוב תצוגת הספר בטלפון */
             #book-reader {
                 padding: 80px 0 20px 0;
-                overflow-x: hidden; /* מניעת גלילה אופקית */
+                overflow-x: hidden; 
             }
             .reader-controls {
-                top: 10px;
-                left: 10px;
-                right: 10px;
+                top: 10px; left: 10px; right: 10px;
                 justify-content: center;
             }
             .reader-controls .btn {
-                font-size: 1rem;
-                padding: 10px;
-                flex: 1; /* הכפתורים תופסים חצי-חצי מהמסך */
+                font-size: 1rem; padding: 10px; flex: 1; 
             }
 
-            /* קסם הרספונסיביות לדף A4 - הקטנה חזותית ששומרת על פרופורציות! */
             .a4-page {
-                /* מחשב את יחס ההקטנה לפי רוחב המסך (פחות קצת שוליים) מול רוחב דף A4 */
                 --scale-factor: calc((100vw - 30px) / 800);
                 transform: scale(var(--scale-factor));
                 transform-origin: top center;
-                /* מתקן את הרווח המיותר שנוצר למטה בגלל ההקטנה של ה-Scale */
                 margin-bottom: calc(-297mm * (1 - var(--scale-factor)) + 20px);
             }
         }
@@ -278,7 +254,7 @@
                 box-shadow: none; 
                 page-break-after: always; 
                 page-break-inside: avoid; 
-                transform: none !important; /* ביטול הקטנת המובייל בהדפסה */
+                transform: none !important; 
             }
             .cover-page, .back-cover-page { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .cover-page::after, .back-cover-page::after { display: none; }
@@ -298,38 +274,15 @@
             <p>מהדורת כריכת עור משובחת עם מסגרת עיוורת עמוקה</p>
         </div>
 
-        <div class="section-title">א. עיצוב כריכות (קדמית ואחורית)</div>
+        <div class="section-title">א. עיצוב כריכות ונוסח הקדשה</div>
         <div class="grid-2">
-            <div class="form-group">
+            <div class="form-group" style="grid-column: 1 / -1;">
                 <label>כותרת כריכה קדמית (ענקית בכסף):</label>
                 <input type="text" id="input-title" value="סידור" placeholder="לדוגמה: סידור, תהילים...">
             </div>
+            
             <div class="form-group">
-                <label>תת כותרת (קטנה יותר מתחת):</label>
-                <input type="text" id="input-subtitle" value="שומע תפילה">
-            </div>
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label>תת כותרת נוספת (קטנטנה, לדוגמה "עם תהלים"):</label>
-                <input type="text" id="input-small-title" value="עם תהלים">
-            </div>
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label>צבע עור הכריכה:</label>
-                <select id="input-cover-color">
-                    <option value="black">שחור פחם עמוק (יוקרתי - כמו בתמונה)</option>
-                    <option value="navy">כחול כהה מאוד</option>
-                    <option value="burgundy">בורדו יין</option>
-                </select>
-            </div>
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label>טקסט לכריכה אחורית (הוצאה לאור / פסוק / מסר קצר):</label>
-                <textarea id="input-back-cover-text" placeholder="לדוגמה: הופק ונערך ברוב פאר והדר..."></textarea>
-            </div>
-        </div>
-
-        <div class="section-title">ב. שער פנימי והקדשה אישית</div>
-        <div class="grid-2">
-            <div class="form-group">
-                <label>נוסח ההקדשה (קטן):</label>
+                <label>נוסח ההקדשה (קטן בכסף):</label>
                 <select id="input-ded-type">
                     <option value="בְּאַהֲבָה וּבְהוֹקָרָה ל-">באהבה ובהוקרה ל-</option>
                     <option value="לְעִילוּי נִשְׁמַת">לעילוי נשמת</option>
@@ -340,12 +293,28 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>שם המוקדש (גדול ומודגש):</label>
+                <label>שם המוקדש (גדול ומודגש בכסף):</label>
                 <input type="text" id="input-name" value="ישראל בן שרה">
             </div>
-            
+
             <div class="form-group" style="grid-column: 1 / -1;">
-                <label>טקסט חופשי (יופיע בשער הפנימי מתחת לשם):</label>
+                <label>צבע עור הכריכה:</label>
+                <select id="input-cover-color">
+                    <option value="black">שחור פחם עמוק (יוקרתי - כמו בתמונה)</option>
+                    <option value="navy">כחול כהה מאוד</option>
+                    <option value="burgundy">בורדו יין</option>
+                </select>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>טקסט לכריכה אחורית (הוצאה לאור / מסר קצר):</label>
+                <textarea id="input-back-cover-text" placeholder="לדוגמה: הופק ונערך ברוב פאר והדר..."></textarea>
+            </div>
+        </div>
+
+        <div class="section-title">ב. שער פנימי (עמוד הפתיחה של הספר)</div>
+        <div class="grid-2">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>טקסט חופשי (יופיע בשער הפנימי מתחת לשם המוקדש):</label>
                 <textarea id="input-custom-text" placeholder="לדוגמה: נתרם באהבה על ידי המשפחה..."></textarea>
             </div>
         </div>
@@ -539,8 +508,6 @@
             await new Promise(r => setTimeout(r, 100));
 
             const bookTitle = document.getElementById('input-title').value;
-            const bookSubTitle = document.getElementById('input-subtitle').value;
-            const bookSmallTitle = document.getElementById('input-small-title').value;
             const backCoverText = document.getElementById('input-back-cover-text').value.replace(/\n/g, '<br>');
             const dedType = document.getElementById('input-ded-type').value;
             const personName = document.getElementById('input-name').value;
@@ -567,14 +534,9 @@
                         <div class="inner-frame">
                             <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                                 <h1 class="cover-title cover-text-silver">${bookTitle}</h1>
-                                ${bookSubTitle ? `<div class="cover-subtitle cover-text-silver">${bookSubTitle}</div>` : ''}
-                                ${bookSmallTitle ? `<div class="cover-small-title cover-text-silver">${bookSmallTitle}</div>` : ''}
-                                <div class="cover-ornament"></div>
-                            </div>
-                            
-                            <div style="text-align: center; position: relative; z-index: 20; padding-bottom: 20px;">
-                                ${dedType ? `<div class="cover-ded-type">${dedType}</div>` : ''}
+                                ${dedType ? `<div class="cover-ded-type cover-text-silver">${dedType}</div>` : ''}
                                 ${personName ? `<div class="cover-name cover-text-silver">${personName}</div>` : ''}
+                                <div class="cover-ornament"></div>
                             </div>
                         </div>
                     </div>
@@ -587,8 +549,6 @@
                     <div class="inside-page-border" style="justify-content: center;">
                         <div class="bsd-text">בס"ד</div>
                         <div class="gate-title">${bookTitle}</div>
-                        <div class="gate-subtitle">${bookSubTitle}</div>
-                        ${bookSmallTitle ? `<div style="text-align:center; font-size:1.5rem; color:#666; font-family:'Frank Ruhl Libre', serif;">${bookSmallTitle}</div>` : ''}
                         <div class="gate-divider">❧ ═════ ❖ ═════ ☙</div>
                         <div style="text-align: center; font-size: 2rem; font-family: 'Frank Ruhl Libre', serif; font-weight: bold; margin-bottom: 10px; color: var(--ink);">${dedType}</div>
                         <div class="gate-name">${personName}</div>
