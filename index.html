@@ -7,6 +7,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;700;900&family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
+        /* נעילת גודל פונט הבסיס כדי שהדפדפן בטלפון לא יגדיל טקסטים בהדפסה וישבור את העימוד */
+        html {
+            font-size: 16px !important; 
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
         :root {
             /* צבעי רקע לבנים/נקיים */
             --bg-base: #f8f9fa;
@@ -211,8 +218,8 @@
         .verse-num { font-weight: 900; color: var(--torah-red); margin-left: 8px; font-size: 1.2em; }
         .loading-text { color: #555; font-size: 2.2rem; margin-top: 100px; font-weight: bold; font-family: 'Frank Ruhl Libre', serif;}
 
-        /* ================== התאמה למובייל (עיצוב רספונסיבי) ================== */
-        @media (max-width: 768px) {
+        /* ================== התאמה למסך מובייל בלבד (לא משפיע על הדפסה) ================== */
+        @media screen and (max-width: 768px) {
             #builder-screen {
                 margin: 15px;
                 padding: 25px 20px;
@@ -242,26 +249,43 @@
             }
         }
 
-        /* ================== הגדרות הדפסה ל-PDF ================== */
+        /* ================== הגדרות קשיחות להדפסה וייצוא ל-PDF ================== */
         @media print {
-            @page { size: A4; margin: 0; }
-            body { background: white; margin: 0; padding: 0; }
+            @page { 
+                size: A4 portrait; 
+                margin: 0; 
+            }
+            body, html { 
+                background: white !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                width: 210mm !important; 
+            }
             #builder-screen, .reader-controls { display: none !important; }
-            #book-reader { display: block; background: white; padding: 0; }
+            #book-reader { display: block; background: white; padding: 0; overflow: visible !important; }
             
             .a4-page { 
+                width: 210mm !important;
+                height: 297mm !important;
                 margin: 0 !important; 
-                box-shadow: none; 
-                page-break-after: always; 
-                page-break-inside: avoid; 
-                transform: none !important; 
+                box-shadow: none !important; 
+                page-break-after: always !important; 
+                page-break-inside: avoid !important; 
+                transform: none !important; /* מבטל את ההקטנה של המובייל */
             }
-            .cover-page, .back-cover-page { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .cover-page::after, .back-cover-page::after { display: none; }
-            .inside-page-border { border-color: #000; outline-color: #000; }
-            .inside-page-border::before { border-color: #000; }
-            .page-content, .gate-custom-text { color: #000; }
-            .page-header, .verse-num, .gate-name, .gate-divider { color: #000; } 
+            
+            /* הבטחת צבעים בכריכה למדפסות/PDF */
+            .cover-page, .back-cover-page { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            }
+            .cover-page::after, .back-cover-page::after { display: none !important; }
+            
+            /* המרת צבעים לשחור מוחלט לפנים הספר */
+            .inside-page-border { border-color: #000 !important; outline-color: #000 !important; }
+            .inside-page-border::before { border-color: #000 !important; }
+            .page-content, .gate-custom-text { color: #000 !important; }
+            .page-header, .verse-num, .gate-name, .gate-divider { color: #000 !important; } 
         }
     </style>
 </head>
