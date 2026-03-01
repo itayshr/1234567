@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחולל ספרי קודש - מהדורת כסף יוקרתית</title>
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;700;900&family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* צבעי רקע לבנים/נקיים */
+            --bg-base: #f8f9fa;
+            --bg-white: #ffffff;
+            
+            /* צבעי פנים הספר */
+            --paper: #fbf5e9; 
+            --ink: #1c1104; 
+            --torah-red: #5e0b0b;
+        }
+
+        body { 
+            margin: 0; padding: 0; 
+            background-color: var(--bg-base); 
+            font-family: 'Heebo', sans-serif; 
+            color: #333; 
+        }
+
+        /* ================== מסך בניית הספר ================== */
+        #builder-screen { 
+            max-width: 900px; margin: 40px auto; 
+            background-color: var(--bg-white); 
+            padding: 50px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08); 
+            border: 1px solid #eaeaea;
+            position: relative;
+        }
+
+        .builder-header { text-align: center; margin-bottom: 40px; }
+        .builder-header h1 { font-size: 3rem; color: #111; margin: 0; font-family: 'Frank Ruhl Libre', serif; font-weight: 900; }
+        .builder-header p { color: #666; font-size: 1.2rem; margin-top: 5px;}
+
+        .section-title { font-size: 1.5rem; color: #222; border-bottom: 2px solid #d4d4d4; padding-bottom: 10px; margin: 30px 0 20px 0; font-weight: bold; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; text-align: right; }
+        .form-group label { font-weight: 600; margin-bottom: 8px; color: #444; font-size: 1rem;}
+        
+        .form-group input[type="text"], .form-group select, .form-group textarea { 
+            padding: 12px; border: 1px solid #ccc; border-radius: 6px; 
+            font-family: 'Heebo', sans-serif; font-size: 1.1rem; 
+            background: #fff; transition: 0.3s;
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #555; outline: none; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        
+        .checkbox-group { background: #fdfdfd; padding: 20px; border-radius: 6px; border: 1px dashed #bbb; }
+        .checkbox-item { display: flex; align-items: center; margin-bottom: 12px; font-size: 1.1rem; font-weight: 600; font-family: 'Frank Ruhl Libre', serif; color: #222;}
+        .checkbox-item input { margin-left: 12px; transform: scale(1.4); accent-color: #333; }
+
+        .chapter-item { background: #fff; border: 1px solid #ddd; padding: 12px 15px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        .remove-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s;}
+        .remove-btn:hover { background: #cc0000; }
+
+        .btn { background: linear-gradient(to bottom, #444, #111); color: #fff; border: none; padding: 15px 25px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-family: 'Heebo', sans-serif;}
+        .btn:hover { background: linear-gradient(to bottom, #555, #222); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
+        .btn-silver { background: linear-gradient(to bottom, #fff, #e0e0e0, #bbb); color: #111; border: 1px solid #999; width: 100%; font-size: 1.6rem; padding: 20px; margin-top: 30px; font-family: 'Frank Ruhl Libre', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
+        .btn-silver:hover { background: linear-gradient(to bottom, #fff, #f4f4f4); color: #000; }
+        .btn-outline { background: transparent; border: 2px solid #333; color: #333; box-shadow: none;}
+        .btn-outline:hover { background: #333; color: #fff; }
+
+        /* ================== תצוגת הספר ================== */
+        #book-reader { 
+            display: none; padding: 60px 0; text-align: center; 
+            background: radial-gradient(circle at center, #ffffff 0%, #d5d9e0 100%); 
+            min-height: 100vh;
+        }
+        .reader-controls { position: fixed; top: 20px; left: 20px; z-index: 1000; display: flex; gap: 10px; }
+
+        .a4-page {
+            width: 210mm;
+            height: 297mm;
+            padding: 18mm; 
+            background-color: var(--paper);
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            margin: 0 auto 50px auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            box-sizing: border-box;
+            text-align: right;
+            position: relative;
+        }
+
+        /* --- כריכת הספר דינמית: עור שחור עמוק --- */
+        .cover-page, .back-cover-page {
+            background-color: var(--cover-main, #0f0f0f);
+            background-image: url('https://www.transparenttextures.com/patterns/leather.png');
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .cover-page {
+            border-radius: 15px 4px 4px 15px;
+            padding: 15px 35px 15px 15px; /* הזחה ימינה בגלל השדרה */
+            box-shadow: 
+                inset -12px 0 25px rgba(0,0,0,0.95), /* צל פנימי שדרה ימין */
+                inset 5px 5px 15px rgba(255,255,255,0.05),
+                30px 30px 50px rgba(0,0,0,0.5);
+        }
+
+        .back-cover-page {
+            border-radius: 4px 15px 15px 4px;
+            padding: 15px 15px 15px 35px; /* הזחה שמאלה בגלל השדרה */
+            box-shadow: 
+                inset 12px 0 25px rgba(0,0,0,0.95), /* צל פנימי שדרה שמאל */
+                inset -5px 5px 15px rgba(255,255,255,0.05),
+                -30px 30px 50px rgba(0,0,0,0.5);
+        }
+
+        /* שדרה + כפלי עור (Ribs) */
+        .cover-spine {
+            position: absolute; top: 0; right: 0; bottom: 0; width: 30px;
+            background: linear-gradient(to left, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.9) 100%);
+            border-radius: 0 4px 4px 0; border-left: 2px solid rgba(0,0,0,0.8); z-index: 5;
+        }
+        .back-spine {
+            position: absolute; top: 0; left: 0; bottom: 0; width: 30px;
+            background: linear-gradient(to right, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.9) 100%);
+            border-radius: 4px 0 0 4px; border-right: 2px solid rgba(0,0,0,0.8); z-index: 5;
+        }
+        .spine-rib {
+            width: 100%; height: 6px; background: rgba(0,0,0,0.8);
+            box-shadow: 0 2px 2px rgba(255,255,255,0.1), 0 -2px 3px rgba(0,0,0,0.9);
+            position: absolute;
+        }
+
+        /* --- מסגרת העיטורים העיוורת (Floral Pattern Debossing) --- */
+        .pattern-band {
+            width: 100%; height: 100%;
+            border: 2px solid rgba(0,0,0,0.8);
+            border-radius: 8px;
+            /* שימוש ב-SVG לייצור פרח מרוקאי עיוור חוזר */
+            background-color: var(--cover-dark, #050505);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 0 Q30 10 20 20 Q10 10 20 0 M20 40 Q30 30 20 20 Q10 30 20 40 M0 20 Q10 10 20 20 Q10 30 0 20 M40 20 Q30 10 20 20 Q30 30 40 20' fill='rgba(0,0,0,0.45)' stroke='rgba(0,0,0,0.9)' stroke-width='1.5'/%3E%3Ccircle cx='20' cy='20' r='3.5' fill='rgba(0,0,0,0.7)'/%3E%3C/svg%3E"), url('https://www.transparenttextures.com/patterns/leather.png');
+            box-shadow: inset 4px 4px 15px rgba(0,0,0,1), inset -2px -2px 5px rgba(255,255,255,0.03);
+            padding: 35px; /* עובי מסגרת הפרחים */
+            box-sizing: border-box;
+        }
+
+        /* --- המסגרת הפנימית והחלקה (Inner Panel) --- */
+        .inner-frame {
+            width: 100%; height: 100%;
+            border-radius: 4px;
+            background-color: var(--cover-main, #0f0f0f);
+            background-image: url('https://www.transparenttextures.com/patterns/leather.png');
+            border: 2px solid #000;
+            /* יצירת אפקט של מסגרת מדורגת - שקוע ואז בולט */
+            box-shadow: 
+                0 0 0 3px var(--cover-dark, #050505),
+                0 0 0 6px #000,
+                0 0 0 7px rgba(255,255,255,0.08),
+                inset 5px 5px 15px rgba(0,0,0,0.9),
+                inset -2px -2px 5px rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 30px; box-sizing: border-box; position: relative; z-index: 10;
+        }
+
+        /* --- ריקוע כסף (Silver Foil) - משודרג --- */
+        .cover-text-silver {
+            /* גרדיאנט שמדמה מתכת מעוגלת - הברקה באמצע */
+            background: linear-gradient(to bottom, #ffffff 0%, #d4d4d4 25%, #7a7a7a 50%, #d4d4d4 75%, #ffffff 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            /* קו מתאר כדי לחדד את המתכת מול הרקע השחור */
+            -webkit-text-stroke: 0.5px rgba(255,255,255,0.3);
+            /* צל חד וכבד ליצירת עומק ההטבעה */
+            filter: drop-shadow(2px 3px 2px rgba(0,0,0,1)) drop-shadow(0px 0px 1px rgba(255,255,255,0.2)); 
+            margin: 0; font-family: 'Frank Ruhl Libre', serif;
+            text-align: center;
+        }
+
+        .cover-title { font-size: 6.5rem; font-weight: 900; line-height: 1; margin-bottom: 5px; letter-spacing: 2px;}
+        .cover-subtitle { font-size: 2.5rem; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px;}
+        .cover-small-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 25px; letter-spacing: 1px;}
+        
+        .cover-ornament { 
+            width: 80px; height: 15px; margin-bottom: 40px;
+            /* עיטור גלי פשוט ב-SVG שצבוע בכסף */
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0 10 Q25 0 50 10 T100 10 M50 5 L55 10 L50 15 L45 10 Z' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E") no-repeat center;
+            filter: drop-shadow(2px 3px 2px rgba(0,0,0,1));
+        }
+        
+        .cover-ded-type { font-size: 1.6rem; color: #888; margin-top: auto; filter: none; -webkit-text-fill-color: #888; text-shadow: 1px 1px 3px #000;}
+        .cover-name { font-size: 2.2rem; font-weight: bold; margin-top: 5px; }
+
+        /* השתקפות רצפה לספרים (רק במסך) */
+        .cover-page::after, .back-cover-page::after {
+            content: ''; position: absolute; bottom: -30px; left: 5%; right: 5%; height: 20px;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, transparent 70%); z-index: -1;
+        }
+
+        /* --- מסגרות פנים (דפוס וילנא) --- */
+        .inside-page-border {
+            border: 4px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 4px;
+            height: 100%; box-sizing: border-box; padding: 30px; display: flex; flex-direction: column; position: relative;
+        }
+        .inside-page-border::before { content: ''; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px; border: 1px solid var(--ink); pointer-events: none; }
+
+        /* --- שער פנימי והקדשה --- */
+        .gate-title { font-size: 4.5rem; text-align: center; font-family: 'Frank Ruhl Libre', serif; color: var(--ink); font-weight: 900; margin-top: 20px; }
+        .gate-subtitle { font-size: 2rem; text-align: center; font-family: 'Frank Ruhl Libre', serif; color: #444; margin-top: 5px; }
+        .gate-divider { text-align: center; font-size: 2.5rem; color: var(--torah-red); margin: 20px 0; }
+        .gate-name { text-align: center; font-size: 4rem; color: var(--torah-red); font-weight: bold; font-family: 'Frank Ruhl Libre', serif; }
+        .gate-custom-text { text-align: center; font-size: 1.4rem; color: var(--ink); font-family: 'Heebo', sans-serif; margin-top: 25px; line-height: 1.5; padding: 0 40px;}
+        .bsd-text { position: absolute; top: 20px; right: 30px; font-weight: bold; font-size: 1.3rem; font-family: 'Frank Ruhl Libre', serif; color: var(--ink); }
+
+        /* --- טקסט הספר --- */
+        .page-header { text-align: center; font-size: 2.4rem; font-family: 'Frank Ruhl Libre', serif; font-weight: bold; color: var(--ink); border-bottom: 3px double var(--torah-red); padding-bottom: 10px; margin-bottom: 20px; }
+        .page-content { flex-grow: 1; font-family: 'Frank Ruhl Libre', serif; font-size: 1.5rem; line-height: 2.2; text-align: justify; column-count: 2; column-gap: 50px; column-rule: 1px solid rgba(28, 17, 4, 0.3); overflow: hidden; color: var(--ink); }
+        .verse-num { font-weight: 900; color: var(--torah-red); margin-left: 8px; font-size: 1.2em; }
+        .loading-text { color: #555; font-size: 2.2rem; margin-top: 100px; font-weight: bold; font-family: 'Frank Ruhl Libre', serif;}
+
+        /* ================== הגדרות הדפסה ל-PDF ================== */
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background: white; margin: 0; padding: 0; }
+            #builder-screen, .reader-controls { display: none !important; }
+            #book-reader { display: block; background: white; padding: 0; }
+            
+            .a4-page { margin: 0; box-shadow: none; page-break-after: always; page-break-inside: avoid; }
+            .cover-page, .back-cover-page { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .cover-page::after, .back-cover-page::after { display: none; }
+            .inside-page-border { border-color: #000; outline-color: #000; }
+            .inside-page-border::before { border-color: #000; }
+            .page-content, .gate-custom-text { color: #000; }
+            .page-header, .verse-num, .gate-name, .gate-divider { color: #000; } 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- מסך מחולל הספר -->
+    <div id="builder-screen">
+        <div class="builder-header">
+            <h1>מחולל ספרי קודש וסידורים</h1>
+            <p>מהדורת כריכת עור משובחת עם מסגרת עיוורת עמוקה</p>
+        </div>
+
+        <div class="section-title">א. עיצוב כריכות (קדמית ואחורית)</div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>כותרת כריכה קדמית (ענקית בכסף):</label>
+                <input type="text" id="input-title" value="סידור" placeholder="לדוגמה: סידור, תהילים...">
+            </div>
+            <div class="form-group">
+                <label>תת כותרת (קטנה יותר מתחת):</label>
+                <input type="text" id="input-subtitle" value="שומע תפילה">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>תת כותרת נוספת (קטנטנה, לדוגמה "עם תהלים"):</label>
+                <input type="text" id="input-small-title" value="עם תהלים">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>צבע עור הכריכה:</label>
+                <select id="input-cover-color">
+                    <option value="black">שחור פחם עמוק (יוקרתי - כמו בתמונה)</option>
+                    <option value="navy">כחול כהה מאוד</option>
+                    <option value="burgundy">בורדו יין</option>
+                </select>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>טקסט לכריכה אחורית (הוצאה לאור / פסוק / מסר קצר):</label>
+                <textarea id="input-back-cover-text" placeholder="לדוגמה: הופק ונערך ברוב פאר והדר..."></textarea>
+            </div>
+        </div>
+
+        <div class="section-title">ב. שער פנימי והקדשה אישית</div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>נוסח ההקדשה (קטן):</label>
+                <select id="input-ded-type">
+                    <option value="בְּאַהֲבָה וּבְהוֹקָרָה ל-">באהבה ובהוקרה ל-</option>
+                    <option value="לְעִילוּי נִשְׁמַת">לעילוי נשמת</option>
+                    <option value="לִרְפוּאַת">לרפואת</option>
+                    <option value="לְזִכְרוֹ שֶׁל">לזכרו של</option>
+                    <option value="מֻקְדָּשׁ לְ-">מוקדש ל-</option>
+                    <option value="">ללא נוסח קבוע (רק שם)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>שם המוקדש (גדול ומודגש):</label>
+                <input type="text" id="input-name" value="ישראל בן שרה">
+            </div>
+            
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>טקסט חופשי (יופיע בשער הפנימי מתחת לשם):</label>
+                <textarea id="input-custom-text" placeholder="לדוגמה: נתרם באהבה על ידי המשפחה..."></textarea>
+            </div>
+        </div>
+
+        <div class="section-title">ג. תוכן: תפילות ובקשות קבועות</div>
+        <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" id="check-shachar" checked> ברכות השחר (מודה אני, אשר יצר...)</label>
+            <label class="checkbox-item"><input type="checkbox" id="check-shema" checked> פרשת קריאת שמע</label>
+            <label class="checkbox-item"><input type="checkbox" id="check-derech" checked> תפילת הדרך</label>
+        </div>
+
+        <div class="section-title">ד. תוכן: הוספת פרקי תנ"ך</div>
+        <div class="grid-2" style="background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 6px;">
+            <div class="form-group">
+                <label>חלק בתנ"ך:</label>
+                <select id="input-category" onchange="updateBooks()"></select>
+            </div>
+            <div class="form-group">
+                <label>ספר:</label>
+                <select id="input-book" onchange="updateChapters()"></select>
+            </div>
+            <div class="form-group">
+                <label>פרק:</label>
+                <select id="input-chapter"></select>
+            </div>
+            <div class="form-group" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="addChapterToList()">+ הוסף פרק זה לספר</button>
+            </div>
+        </div>
+
+        <ul id="selected-chapters-list" style="list-style: none; padding: 0; margin-top: 20px;"></ul>
+
+        <button class="btn btn-silver" onclick="generateBook()">ייצר ועמד את הספר 🖨️</button>
+    </div>
+
+    <!-- תצוגת הספר המעומד -->
+    <div id="book-reader">
+        <div class="reader-controls">
+            <button class="btn" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
+            <button class="btn btn-outline" style="background: #fff;" onclick="backToBuilder()">✏️ חזור למחולל</button>
+        </div>
+        <div id="pages-container"></div>
+    </div>
+
+    <script>
+        // מילון צבעי כריכה מעודכנים כהים ועמוקים
+        const coverColors = {
+            'black': { main: '#0c0c0c', dark: '#000000' },
+            'navy': { main: '#060a12', dark: '#020305' },
+            'burgundy': { main: '#240404', dark: '#0d0000' }
+        };
+
+        const siddurTexts = {
+            shachar:[
+                "<b>מוֹדֶה אֲנִי</b> לְפָנֶיךָ מֶלֶךְ חַי וְקַיָּם, שֶׁהֶחֱזַרְתָּ בִּי נִשְׁמָתִי בְּחֶמְלָה, רַבָּה אֱמוּנָתֶךָ.",
+                "<b>בָּרוּךְ אַתָּה ה'</b> אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו, וְצִוָּנוּ עַל נְטִילַת יָדָיִם.",
+                "<b>בָּרוּךְ אַתָּה ה'</b> אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר יָצַר אֶת הָאָדָם בְּחָכְמָה, וּבָרָא בוֹ נְקָבִים נְקָבִים, חֲלוּלִים חֲלוּלִים. גָּלוּי וְיָדוּעַ לִפְנֵי כִסֵּא כְבוֹדֶךָ, שֶׁאִם יִפָּתֵחַ אֶחָד מֵהֶם, אוֹ יִסָּתֵם אֶחָד מֵהֶם, אִי אֶפְשַׁר לְהִתְקַיֵּם וְלַעֲמוֹד לְפָנֶיךָ. בָּרוּךְ אַתָּה ה', רוֹפֵא כָל בָּשָׂר וּמַפְלִיא לַעֲשׂוֹת."
+            ],
+            shema:[
+                "<b>שְׁמַע יִשְׂרָאֵל</b> ה' אֱלֹהֵינוּ ה' אֶחָד. (בָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד).",
+                "וְאָהַבְתָּ אֵת ה' אֱלֹהֶיךָ בְּכָל לְבָבְךָ וּבְכָל נַפְשְׁךָ וּבְכָל מְאֹדֶךָ. וְהָיוּ הַדְּבָרִים הָאֵלֶּה אֲשֶׁר אָנֹכִי מְצַוְּךָ הַיּוֹם עַל לְבָבֶךָ. וְשִׁנַּנְתָּם לְבָנֶיךָ וְדִבַּרְתָּ בָּם, בְּשִׁבְתְּךָ בְּבֵיתֶךָ וּבְלֶכְתְּךָ בַדֶּרֶךְ וּבְשָׁכְבְּךָ וּבְקוּמֶךָ. וּקְשַׁרְתָּם לְאוֹת עַל יָדֶךָ, וְהָיוּ לְטֹטָפֹת בֵּין עֵינֶיךָ. וּכְתַבְתָּם עַל מְזֻזוֹת בֵּיתֶךָ וּבִשְׁעָרֶיךָ."
+            ],
+            derech:[
+                "<b>יְהִי רָצוֹן מִלְּפָנֶיךָ</b> ה' אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, שֶׁתּוֹלִיכֵנוּ לְשָׁלוֹם וְתַצְעִידֵנוּ לְשָׁלוֹם. וְתִסְמְכֵנוּ לְשָׁלוֹם, וְתַדְרִיכֵנוּ לְשָׁלוֹם. וְתַגִּיעֵנוּ לִמְחוֹז חֶפְצֵנוּ לְחַיִּים וּלְשִׂמְחָה וּלְשָׁלוֹם. וְתַצִּילֵנוּ מִכַּף כָּל אוֹיֵב וְאוֹרֵב אֶת דֶּרֶךְ וּמִכָּל פֻּרְעָנִיּוֹת הַמִּתְרַגְּשׁוֹת וּבָאוֹת לָעוֹלָם וְתִשְׁלַח בְּרָכָה בְּכָל מַעֲשֵׂה יָדֵינוּ, וְתִתְּנֵנוּ לְחֵן וּלְחֶסֶד וּלְרַחֲמִים בְּעֵינֶיךָ וּבְעֵינֵי כָל רוֹאֵינוּ וְתִשְׁמַע קוֹל תַּחֲנוּנֵינוּ. כִּי אֵל שׁוֹמֵעַ תְּפִלָּה וְתַחֲנוּן אַתָּה. בָּרוּךְ אַתָּה ה', שׁוֹמֵעַ תְּפִלָּה."
+            ]
+        };
+
+        const tanakhData = {
+            "תורה":[{ he: "בראשית", en: "Genesis", chapters: 50 }, { he: "שמות", en: "Exodus", chapters: 40 }, { he: "ויקרא", en: "Leviticus", chapters: 27 }, { he: "במדבר", en: "Numbers", chapters: 36 }, { he: "דברים", en: "Deuteronomy", chapters: 34 }],
+            "נביאים":[{ he: "יהושע", en: "Joshua", chapters: 24 }, { he: "שופטים", en: "Judges", chapters: 21 }, { he: "שמואל א", en: "I Samuel", chapters: 31 }, { he: "מלכים א", en: "I Kings", chapters: 22 }, { he: "ישעיהו", en: "Isaiah", chapters: 66 }, { he: "ירמיהו", en: "Jeremiah", chapters: 52 }],
+            "כתובים":[{ he: "תהילים", en: "Psalms", chapters: 150 }, { he: "משלי", en: "Proverbs", chapters: 31 }, { he: "איוב", en: "Job", chapters: 42 }, { he: "שיר השירים", en: "Song of Songs", chapters: 8 }, { he: "קהלת", en: "Ecclesiastes", chapters: 12 }, { he: "אסתר", en: "Esther", chapters: 10 }]
+        };
+
+        let selectedChaptersList =[];
+        let chapterIdCounter = 0;
+
+        function numberToHebrew(num) {
+            if (num <= 0) return '';
+            const ones =['', 'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט'];
+            const tens =['', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ'];
+            const hundreds =['', 'ק', 'ר', 'ש', 'ת', 'תק', 'תר', 'תש', 'תת', 'תתק'];
+            let str = '';
+            if (num >= 100) { str += hundreds[Math.floor(num / 100)]; num %= 100; }
+            if (num === 15) return str + 'טו';
+            if (num === 16) return str + 'טז';
+            if (num >= 10) { str += tens[Math.floor(num / 10)]; num %= 10; }
+            if (num > 0) { str += ones[num]; }
+            return str;
+        }
+
+        window.onload = function() {
+            const catSelect = document.getElementById('input-category');
+            for (let cat in tanakhData) {
+                let opt = document.createElement('option');
+                opt.value = cat; opt.innerText = cat;
+                catSelect.appendChild(opt);
+            }
+            updateBooks();
+        };
+
+        function updateBooks() {
+            const cat = document.getElementById('input-category').value;
+            const bookSelect = document.getElementById('input-book');
+            bookSelect.innerHTML = '';
+            tanakhData[cat].forEach((book, index) => {
+                let opt = document.createElement('option');
+                opt.value = index; opt.innerText = book.he;
+                bookSelect.appendChild(opt);
+            });
+            updateChapters();
+        }
+
+        function updateChapters() {
+            const cat = document.getElementById('input-category').value;
+            const bookIndex = document.getElementById('input-book').value;
+            const chapterSelect = document.getElementById('input-chapter');
+            chapterSelect.innerHTML = '';
+            const book = tanakhData[cat][bookIndex];
+            for (let i = 1; i <= book.chapters; i++) {
+                let opt = document.createElement('option');
+                opt.value = i; opt.innerText = "פרק " + numberToHebrew(i) + "'";
+                chapterSelect.appendChild(opt);
+            }
+        }
+
+        function addChapterToList() {
+            const cat = document.getElementById('input-category').value;
+            const bookIndex = document.getElementById('input-book').value;
+            const book = tanakhData[cat][bookIndex];
+            const chapterNum = document.getElementById('input-chapter').value;
+            
+            selectedChaptersList.push({
+                id: chapterIdCounter++, heBook: book.he, enBook: book.en, chapter: chapterNum, heChapter: "פרק " + numberToHebrew(parseInt(chapterNum)) + "'"
+            });
+            
+            const list = document.getElementById('selected-chapters-list');
+            list.innerHTML = '';
+            selectedChaptersList.forEach(item => {
+                list.innerHTML += `<li class="chapter-item"><span>📖 ${item.heBook} - ${item.heChapter}</span> <button class="remove-btn" onclick="removeChapter(${item.id})">הסר</button></li>`;
+            });
+        }
+
+        function removeChapter(id) {
+            selectedChaptersList = selectedChaptersList.filter(c => c.id !== id);
+            const list = document.getElementById('selected-chapters-list');
+            list.innerHTML = '';
+            selectedChaptersList.forEach(item => {
+                list.innerHTML += `<li class="chapter-item"><span>📖 ${item.heBook} - ${item.heChapter}</span> <button class="remove-btn" onclick="removeChapter(${item.id})">הסר</button></li>`;
+            });
+        }
+
+        async function buildPaginatedSection(title, itemsArray) {
+            const container = document.getElementById('pages-container');
+            let contentDiv;
+
+            function createNewPage() {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'a4-page';
+                pageDiv.innerHTML = `
+                    <div class="inside-page-border">
+                        <div class="page-header">${title}</div>
+                        <div class="page-content"></div>
+                    </div>
+                `;
+                container.appendChild(pageDiv);
+                contentDiv = pageDiv.querySelector('.page-content');
+            }
+
+            createNewPage();
+
+            for (let html of itemsArray) {
+                const span = document.createElement('span');
+                span.style.display = 'inline';
+                span.innerHTML = html + '&nbsp;&nbsp;&nbsp;'; 
+                contentDiv.appendChild(span);
+
+                if (contentDiv.scrollHeight > contentDiv.clientHeight + 5 || contentDiv.scrollWidth > contentDiv.clientWidth + 5) {
+                    contentDiv.removeChild(span); 
+                    createNewPage(); 
+                    contentDiv.appendChild(span); 
+                }
+            }
+        }
+
+        async function generateBook() {
+            document.getElementById('builder-screen').style.display = 'none';
+            document.getElementById('book-reader').style.display = 'block';
+            
+            const container = document.getElementById('pages-container');
+            container.innerHTML = '<div class="loading-text">מעצב את דפי הספר, נא להמתין...</div>';
+
+            await new Promise(r => setTimeout(r, 100));
+
+            const bookTitle = document.getElementById('input-title').value;
+            const bookSubTitle = document.getElementById('input-subtitle').value;
+            const bookSmallTitle = document.getElementById('input-small-title').value;
+            const backCoverText = document.getElementById('input-back-cover-text').value.replace(/\n/g, '<br>');
+            const dedType = document.getElementById('input-ded-type').value;
+            const personName = document.getElementById('input-name').value;
+            
+            const coverColorKey = document.getElementById('input-cover-color').value;
+            const selectedColor = coverColors[coverColorKey];
+
+            let customText = document.getElementById('input-custom-text').value;
+            customText = customText.replace(/\n/g, '<br>');
+            
+            container.innerHTML = '';
+
+            // 1. כריכה קדמית משודרגת עם תבנית פרחים והטבעה כפולה
+            container.innerHTML += `
+                <div class="a4-page cover-page" style="--cover-main: ${selectedColor.main}; --cover-dark: ${selectedColor.dark};">
+                    <div class="cover-spine">
+                        <div class="spine-rib" style="top: 15%;"></div>
+                        <div class="spine-rib" style="top: 30%;"></div>
+                        <div class="spine-rib" style="top: 70%;"></div>
+                        <div class="spine-rib" style="top: 85%;"></div>
+                    </div>
+                    
+                    <div class="pattern-band">
+                        <div class="inner-frame">
+                            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                                <h1 class="cover-title cover-text-silver">${bookTitle}</h1>
+                                ${bookSubTitle ? `<div class="cover-subtitle cover-text-silver">${bookSubTitle}</div>` : ''}
+                                ${bookSmallTitle ? `<div class="cover-small-title cover-text-silver">${bookSmallTitle}</div>` : ''}
+                                <div class="cover-ornament"></div>
+                            </div>
+                            
+                            <div style="text-align: center; position: relative; z-index: 20; padding-bottom: 20px;">
+                                ${dedType ? `<div class="cover-ded-type">${dedType}</div>` : ''}
+                                ${personName ? `<div class="cover-name cover-text-silver">${personName}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 2. שער פנימי
+            container.innerHTML += `
+                <div class="a4-page">
+                    <div class="inside-page-border" style="justify-content: center;">
+                        <div class="bsd-text">בס"ד</div>
+                        <div class="gate-title">${bookTitle}</div>
+                        <div class="gate-subtitle">${bookSubTitle}</div>
+                        ${bookSmallTitle ? `<div style="text-align:center; font-size:1.5rem; color:#666; font-family:'Frank Ruhl Libre', serif;">${bookSmallTitle}</div>` : ''}
+                        <div class="gate-divider">❧ ═════ ❖ ═════ ☙</div>
+                        <div style="text-align: center; font-size: 2rem; font-family: 'Frank Ruhl Libre', serif; font-weight: bold; margin-bottom: 10px; color: var(--ink);">${dedType}</div>
+                        <div class="gate-name">${personName}</div>
+                        ${customText ? `<div class="gate-custom-text">${customText}</div>` : ''}
+                    </div>
+                </div>
+            `;
+
+            // 3. סידור
+            if(document.getElementById('check-shachar').checked) {
+                await buildPaginatedSection("ברכות השחר", siddurTexts.shachar.map(t => `<p style="margin:0 0 10px 0">${t}</p>`));
+            }
+            if(document.getElementById('check-shema').checked) {
+                await buildPaginatedSection("קריאת שמע", siddurTexts.shema.map(t => `<p style="margin:0 0 10px 0">${t}</p>`));
+            }
+            if(document.getElementById('check-derech').checked) {
+                await buildPaginatedSection("תפילת הדרך", siddurTexts.derech.map(t => `<p style="margin:0 0 10px 0">${t}</p>`));
+            }
+
+            // 4. פרקי תנ"ך
+            for (let item of selectedChaptersList) {
+                try {
+                    const res = await fetch(`https://www.sefaria.org/api/texts/${item.enBook}.${item.chapter}?context=0&lang=he`);
+                    const data = await res.json();
+                    
+                    if (data.he && data.he.length > 0) {
+                        const versesArray = data.he.map((verse, idx) => `<span class="verse-num">${numberToHebrew(idx + 1)}.</span> ${verse}`);
+                        await buildPaginatedSection(`ספר ${item.heBook} - ${item.heChapter}`, versesArray);
+                    }
+                } catch (e) {
+                    console.error("שגיאה במשיכת הפרק", e);
+                }
+            }
+            
+            // 5. כריכה אחורית
+            container.innerHTML += `
+                <div class="a4-page back-cover-page" style="--cover-main: ${selectedColor.main}; --cover-dark: ${selectedColor.dark};">
+                    <div class="back-spine">
+                        <div class="spine-rib" style="top: 15%;"></div>
+                        <div class="spine-rib" style="top: 30%;"></div>
+                        <div class="spine-rib" style="top: 70%;"></div>
+                        <div class="spine-rib" style="top: 85%;"></div>
+                    </div>
+                    
+                    <div class="pattern-band">
+                        <div class="inner-frame">
+                            <div style="margin: auto 0; text-align: center; width: 80%;">
+                                <div class="cover-ornament"></div>
+                                <h3 class="cover-text-silver" style="font-size: 1.8rem; font-weight: normal; line-height: 1.6;">${backCoverText}</h3>
+                                <div class="cover-ornament" style="margin-top: 40px; transform: scaleY(-1);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function backToBuilder() {
+            document.getElementById('book-reader').style.display = 'none';
+            document.getElementById('builder-screen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
