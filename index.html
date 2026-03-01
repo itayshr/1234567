@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;700;900&family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        /* נעילת גודל פונט הבסיס כדי שהדפדפן בטלפון לא יגדיל טקסטים בהדפסה וישבור את העימוד */
+        /* נעילת גודל פונט הבסיס כדי שהדפדפן לא יגדיל טקסטים באופן לא רצוי */
         html {
             font-size: 16px !important; 
             -webkit-text-size-adjust: 100%;
@@ -15,11 +15,8 @@
         }
 
         :root {
-            /* צבעי רקע לבנים/נקיים */
             --bg-base: #f8f9fa;
             --bg-white: #ffffff;
-            
-            /* צבעי פנים הספר */
             --paper: #fbf5e9; 
             --ink: #1c1104; 
             --torah-red: #5e0b0b;
@@ -218,7 +215,7 @@
         .verse-num { font-weight: 900; color: var(--torah-red); margin-left: 8px; font-size: 1.2em; }
         .loading-text { color: #555; font-size: 2.2rem; margin-top: 100px; font-weight: bold; font-family: 'Frank Ruhl Libre', serif;}
 
-        /* ================== התאמה למסך מובייל בלבד (לא משפיע על הדפסה) ================== */
+        /* ================== התאמה למסך מובייל בלבד ================== */
         @media screen and (max-width: 768px) {
             #builder-screen {
                 margin: 15px;
@@ -249,39 +246,54 @@
             }
         }
 
-        /* ================== הגדרות קשיחות להדפסה וייצוא ל-PDF ================== */
+        /* ================== הגדרות קשיחות לתיקון הדפסה (78%) בטלפון ובמחשב ================== */
         @media print {
             @page { 
-                size: A4 portrait; 
+                size: 210mm 297mm; /* הגדרה ברורה ומפורשת של מידות הנייר לדפדפן */
                 margin: 0; 
             }
+            
             body, html { 
                 background: white !important; 
                 margin: 0 !important; 
                 padding: 0 !important; 
-                width: 210mm !important; 
+                /* במקום לתת מידה ב-mm שמשגעת את האייפון, אנחנו נותנים 100% כדי שימלא את הדף המודפס בדיוק! */
+                width: 100% !important; 
+                height: 100% !important;
+                max-width: 100% !important;
             }
+            
             #builder-screen, .reader-controls { display: none !important; }
-            #book-reader { display: block; background: white; padding: 0; overflow: visible !important; }
+            
+            #book-reader { 
+                display: block !important; 
+                background: white !important; 
+                padding: 0 !important; 
+                margin: 0 !important;
+                width: 100% !important; 
+            }
             
             .a4-page { 
-                width: 210mm !important;
+                /* הדף תופס בדיוק 100% מנייר ההדפסה - מה שמונע צורך בזום 78% */
+                width: 100% !important; 
                 height: 297mm !important;
-                margin: 0 !important; 
+                max-width: 210mm !important; 
+                margin: 0 auto !important; 
                 box-shadow: none !important; 
                 page-break-after: always !important; 
                 page-break-inside: avoid !important; 
-                transform: none !important; /* מבטל את ההקטנה של המובייל */
+                transform: none !important; /* ביטול הקטנת המסך מהמובייל */
+                zoom: 1 !important; 
             }
             
-            /* הבטחת צבעים בכריכה למדפסות/PDF */
+            /* הבטחת צבעי רקע וטקסטורות עור גם בהדפסה מכל מכשיר */
             .cover-page, .back-cover-page { 
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important; 
             }
             .cover-page::after, .back-cover-page::after { display: none !important; }
             
-            /* המרת צבעים לשחור מוחלט לפנים הספר */
+            /* המרת צבעי הטקסט בתוך הספר לשחור מלא לשם הדפסה חדה */
             .inside-page-border { border-color: #000 !important; outline-color: #000 !important; }
             .inside-page-border::before { border-color: #000 !important; }
             .page-content, .gate-custom-text { color: #000 !important; }
