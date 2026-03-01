@@ -103,18 +103,18 @@
 
         .cover-page {
             border-radius: 15px 4px 4px 15px;
-            padding: 15px 35px 15px 15px; /* הזחה ימינה בגלל השדרה */
+            padding: 15px 35px 15px 15px; 
             box-shadow: 
-                inset -12px 0 25px rgba(0,0,0,0.95), /* צל פנימי שדרה ימין */
+                inset -12px 0 25px rgba(0,0,0,0.95), 
                 inset 5px 5px 15px rgba(255,255,255,0.05),
                 30px 30px 50px rgba(0,0,0,0.5);
         }
 
         .back-cover-page {
             border-radius: 4px 15px 15px 4px;
-            padding: 15px 15px 15px 35px; /* הזחה שמאלה בגלל השדרה */
+            padding: 15px 15px 15px 35px; 
             box-shadow: 
-                inset 12px 0 25px rgba(0,0,0,0.95), /* צל פנימי שדרה שמאל */
+                inset 12px 0 25px rgba(0,0,0,0.95), 
                 inset -5px 5px 15px rgba(255,255,255,0.05),
                 -30px 30px 50px rgba(0,0,0,0.5);
         }
@@ -141,11 +141,10 @@
             width: 100%; height: 100%;
             border: 2px solid rgba(0,0,0,0.8);
             border-radius: 8px;
-            /* שימוש ב-SVG לייצור פרח מרוקאי עיוור חוזר */
             background-color: var(--cover-dark, #050505);
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 0 Q30 10 20 20 Q10 10 20 0 M20 40 Q30 30 20 20 Q10 30 20 40 M0 20 Q10 10 20 20 Q10 30 0 20 M40 20 Q30 10 20 20 Q30 30 40 20' fill='rgba(0,0,0,0.45)' stroke='rgba(0,0,0,0.9)' stroke-width='1.5'/%3E%3Ccircle cx='20' cy='20' r='3.5' fill='rgba(0,0,0,0.7)'/%3E%3C/svg%3E"), url('https://www.transparenttextures.com/patterns/leather.png');
             box-shadow: inset 4px 4px 15px rgba(0,0,0,1), inset -2px -2px 5px rgba(255,255,255,0.03);
-            padding: 35px; /* עובי מסגרת הפרחים */
+            padding: 35px; 
             box-sizing: border-box;
         }
 
@@ -156,7 +155,6 @@
             background-color: var(--cover-main, #0f0f0f);
             background-image: url('https://www.transparenttextures.com/patterns/leather.png');
             border: 2px solid #000;
-            /* יצירת אפקט של מסגרת מדורגת - שקוע ואז בולט */
             box-shadow: 
                 0 0 0 3px var(--cover-dark, #050505),
                 0 0 0 6px #000,
@@ -167,15 +165,12 @@
             padding: 30px; box-sizing: border-box; position: relative; z-index: 10;
         }
 
-        /* --- ריקוע כסף (Silver Foil) - משודרג --- */
+        /* --- ריקוע כסף (Silver Foil) --- */
         .cover-text-silver {
-            /* גרדיאנט שמדמה מתכת מעוגלת - הברקה באמצע */
             background: linear-gradient(to bottom, #ffffff 0%, #d4d4d4 25%, #7a7a7a 50%, #d4d4d4 75%, #ffffff 100%);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
-            /* קו מתאר כדי לחדד את המתכת מול הרקע השחור */
             -webkit-text-stroke: 0.5px rgba(255,255,255,0.3);
-            /* צל חד וכבד ליצירת עומק ההטבעה */
             filter: drop-shadow(2px 3px 2px rgba(0,0,0,1)) drop-shadow(0px 0px 1px rgba(255,255,255,0.2)); 
             margin: 0; font-family: 'Frank Ruhl Libre', serif;
             text-align: center;
@@ -187,7 +182,6 @@
         
         .cover-ornament { 
             width: 80px; height: 15px; margin-bottom: 40px;
-            /* עיטור גלי פשוט ב-SVG שצבוע בכסף */
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0 10 Q25 0 50 10 T100 10 M50 5 L55 10 L50 15 L45 10 Z' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E") no-repeat center;
             filter: drop-shadow(2px 3px 2px rgba(0,0,0,1));
         }
@@ -195,13 +189,12 @@
         .cover-ded-type { font-size: 1.6rem; color: #888; margin-top: auto; filter: none; -webkit-text-fill-color: #888; text-shadow: 1px 1px 3px #000;}
         .cover-name { font-size: 2.2rem; font-weight: bold; margin-top: 5px; }
 
-        /* השתקפות רצפה לספרים (רק במסך) */
         .cover-page::after, .back-cover-page::after {
             content: ''; position: absolute; bottom: -30px; left: 5%; right: 5%; height: 20px;
             background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, transparent 70%); z-index: -1;
         }
 
-        /* --- מסגרות פנים (דפוס וילנא) --- */
+        /* --- מסגרות פנים --- */
         .inside-page-border {
             border: 4px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 4px;
             height: 100%; box-sizing: border-box; padding: 30px; display: flex; flex-direction: column; position: relative;
@@ -222,6 +215,57 @@
         .verse-num { font-weight: 900; color: var(--torah-red); margin-left: 8px; font-size: 1.2em; }
         .loading-text { color: #555; font-size: 2.2rem; margin-top: 100px; font-weight: bold; font-family: 'Frank Ruhl Libre', serif;}
 
+        /* ================== התאמה למובייל (עיצוב רספונסיבי) ================== */
+        @media (max-width: 768px) {
+            /* עיצוב הטופס בטלפון */
+            #builder-screen {
+                margin: 15px;
+                padding: 25px 20px;
+            }
+            .builder-header h1 {
+                font-size: 2.2rem;
+            }
+            .section-title {
+                font-size: 1.3rem;
+                margin: 20px 0 15px 0;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr; /* הפיכה לעמודה אחת */
+                gap: 15px;
+            }
+            .btn-silver {
+                font-size: 1.3rem;
+                padding: 15px;
+            }
+
+            /* עיצוב תצוגת הספר בטלפון */
+            #book-reader {
+                padding: 80px 0 20px 0;
+                overflow-x: hidden; /* מניעת גלילה אופקית */
+            }
+            .reader-controls {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                justify-content: center;
+            }
+            .reader-controls .btn {
+                font-size: 1rem;
+                padding: 10px;
+                flex: 1; /* הכפתורים תופסים חצי-חצי מהמסך */
+            }
+
+            /* קסם הרספונסיביות לדף A4 - הקטנה חזותית ששומרת על פרופורציות! */
+            .a4-page {
+                /* מחשב את יחס ההקטנה לפי רוחב המסך (פחות קצת שוליים) מול רוחב דף A4 */
+                --scale-factor: calc((100vw - 30px) / 800);
+                transform: scale(var(--scale-factor));
+                transform-origin: top center;
+                /* מתקן את הרווח המיותר שנוצר למטה בגלל ההקטנה של ה-Scale */
+                margin-bottom: calc(-297mm * (1 - var(--scale-factor)) + 20px);
+            }
+        }
+
         /* ================== הגדרות הדפסה ל-PDF ================== */
         @media print {
             @page { size: A4; margin: 0; }
@@ -229,7 +273,13 @@
             #builder-screen, .reader-controls { display: none !important; }
             #book-reader { display: block; background: white; padding: 0; }
             
-            .a4-page { margin: 0; box-shadow: none; page-break-after: always; page-break-inside: avoid; }
+            .a4-page { 
+                margin: 0 !important; 
+                box-shadow: none; 
+                page-break-after: always; 
+                page-break-inside: avoid; 
+                transform: none !important; /* ביטול הקטנת המובייל בהדפסה */
+            }
             .cover-page, .back-cover-page { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .cover-page::after, .back-cover-page::after { display: none; }
             .inside-page-border { border-color: #000; outline-color: #000; }
@@ -334,14 +384,13 @@
     <!-- תצוגת הספר המעומד -->
     <div id="book-reader">
         <div class="reader-controls">
-            <button class="btn" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
-            <button class="btn btn-outline" style="background: #fff;" onclick="backToBuilder()">✏️ חזור למחולל</button>
+            <button class="btn" onclick="window.print()">🖨️ הדפס / ל-PDF</button>
+            <button class="btn btn-outline" style="background: #fff;" onclick="backToBuilder()">✏️ חזור לעריכה</button>
         </div>
         <div id="pages-container"></div>
     </div>
 
     <script>
-        // מילון צבעי כריכה מעודכנים כהים ועמוקים
         const coverColors = {
             'black': { main: '#0c0c0c', dark: '#000000' },
             'navy': { main: '#060a12', dark: '#020305' },
@@ -504,7 +553,7 @@
             
             container.innerHTML = '';
 
-            // 1. כריכה קדמית משודרגת עם תבנית פרחים והטבעה כפולה
+            // 1. כריכה קדמית
             container.innerHTML += `
                 <div class="a4-page cover-page" style="--cover-main: ${selectedColor.main}; --cover-dark: ${selectedColor.dark};">
                     <div class="cover-spine">
