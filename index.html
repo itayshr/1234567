@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;700;900&family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        /* נעילת גודל פונט הבסיס כדי שהדפדפן לא יגדיל טקסטים באופן לא רצוי */
+        /* נעילת גודל פונט הבסיס כדי שהטלפון לא ינפח טקסטים באופן לא רצוי */
         html {
             font-size: 16px !important; 
-            -webkit-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%; /* מכריח את הטלפון להראות פונט כמו במחשב */
             text-size-adjust: 100%;
         }
 
@@ -123,7 +123,7 @@
                 -30px 30px 50px rgba(0,0,0,0.5);
         }
 
-        /* שדרה + כפלי עור (Ribs) */
+        /* שדרה + כפלי עור */
         .cover-spine {
             position: absolute; top: 0; right: 0; bottom: 0; width: 30px;
             background: linear-gradient(to left, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.9) 100%);
@@ -140,7 +140,7 @@
             position: absolute;
         }
 
-        /* --- מסגרת העיטורים העיוורת (Floral Pattern Debossing) --- */
+        /* --- מסגרת העיטורים העיוורת --- */
         .pattern-band {
             width: 100%; height: 100%;
             border: 2px solid rgba(0,0,0,0.8);
@@ -152,7 +152,6 @@
             box-sizing: border-box;
         }
 
-        /* --- המסגרת הפנימית והחלקה (Inner Panel) --- */
         .inner-frame {
             width: 100%; height: 100%;
             border-radius: 4px;
@@ -169,15 +168,13 @@
             padding: 30px; box-sizing: border-box; position: relative; z-index: 10;
         }
 
-        /* --- ריקוע כסף (Silver Foil) --- */
         .cover-text-silver {
             background: linear-gradient(to bottom, #ffffff 0%, #d4d4d4 25%, #7a7a7a 50%, #d4d4d4 75%, #ffffff 100%);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
             -webkit-text-stroke: 0.5px rgba(255,255,255,0.3);
             filter: drop-shadow(2px 3px 2px rgba(0,0,0,1)) drop-shadow(0px 0px 1px rgba(255,255,255,0.2)); 
-            margin: 0; font-family: 'Frank Ruhl Libre', serif;
-            text-align: center;
+            margin: 0; font-family: 'Frank Ruhl Libre', serif; text-align: center;
         }
 
         .cover-title { font-size: 6.5rem; font-weight: 900; line-height: 1; margin-bottom: 20px; letter-spacing: 2px;}
@@ -188,11 +185,6 @@
             width: 80px; height: 15px; margin-bottom: 40px;
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0 10 Q25 0 50 10 T100 10 M50 5 L55 10 L50 15 L45 10 Z' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E") no-repeat center;
             filter: drop-shadow(2px 3px 2px rgba(0,0,0,1));
-        }
-        
-        .cover-page::after, .back-cover-page::after {
-            content: ''; position: absolute; bottom: -30px; left: 5%; right: 5%; height: 20px;
-            background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, transparent 70%); z-index: -1;
         }
 
         /* --- מסגרות פנים --- */
@@ -215,38 +207,25 @@
         .verse-num { font-weight: 900; color: var(--torah-red); margin-left: 8px; font-size: 1.2em; }
         .loading-text { color: #555; font-size: 2.2rem; margin-top: 100px; font-weight: bold; font-family: 'Frank Ruhl Libre', serif;}
 
-        /* ================== התאמה למסך מובייל בלבד ================== */
+        /* ================== התאמה לתצוגת מסך במובייל (ללא פגיעה בהדפסה) ================== */
         @media screen and (max-width: 768px) {
-            #builder-screen {
-                margin: 15px;
-                padding: 25px 20px;
-            }
+            #builder-screen { margin: 15px; padding: 25px 20px; }
             .builder-header h1 { font-size: 2.2rem; }
-            .section-title { font-size: 1.3rem; margin: 20px 0 15px 0; }
             .grid-2 { grid-template-columns: 1fr; gap: 15px; }
-            .btn-silver { font-size: 1.3rem; padding: 15px; }
+            
+            #book-reader { padding: 80px 0 20px 0; overflow-x: hidden; }
+            .reader-controls { top: 10px; left: 10px; right: 10px; justify-content: center; }
+            .reader-controls .btn { font-size: 1rem; padding: 10px; flex: 1; }
 
-            #book-reader {
-                padding: 80px 0 20px 0;
-                overflow-x: hidden; 
-            }
-            .reader-controls {
-                top: 10px; left: 10px; right: 10px;
-                justify-content: center;
-            }
-            .reader-controls .btn {
-                font-size: 1rem; padding: 10px; flex: 1; 
-            }
-
+            /* כיווץ ויזואלי של הדף במסך קטן כדי שלא יצטרכו לגלול ימינה ושמאלה */
             .a4-page {
-                --scale-factor: calc((100vw - 30px) / 800);
-                transform: scale(var(--scale-factor));
+                transform: scale(calc((100vw - 30px) / 800));
                 transform-origin: top center;
-                margin-bottom: calc(-297mm * (1 - var(--scale-factor)) + 20px);
+                margin-bottom: -150px; /* קירוב הדפים בגלל ההקטנה */
             }
         }
 
-        /* ================== הגדרות קשיחות לתיקון הדפסה (78%) בטלפון ובמחשב ================== */
+        /* ================== הגדרות קשיחות לתיקון הדפסה (100% רגיל) בטלפון ובמחשב ================== */
         @media print {
             @page { 
                 size: 210mm 297mm; /* הגדרה ברורה ומפורשת של מידות הנייר לדפדפן */
@@ -257,7 +236,6 @@
                 background: white !important; 
                 margin: 0 !important; 
                 padding: 0 !important; 
-                /* במקום לתת מידה ב-mm שמשגעת את האייפון, אנחנו נותנים 100% כדי שימלא את הדף המודפס בדיוק! */
                 width: 100% !important; 
                 height: 100% !important;
                 max-width: 100% !important;
@@ -274,14 +252,16 @@
             }
             
             .a4-page { 
-                /* הדף תופס בדיוק 100% מנייר ההדפסה - מה שמונע צורך בזום 78% */
+                /* הדף תופס בדיוק 100% מנייר ההדפסה והגובה שלו נעול - מונע גלישה ל-2 דפים וצורך ב-78% */
                 width: 100% !important; 
                 height: 297mm !important;
+                max-height: 297mm !important;
                 max-width: 210mm !important; 
                 margin: 0 auto !important; 
                 box-shadow: none !important; 
                 page-break-after: always !important; 
                 page-break-inside: avoid !important; 
+                overflow: hidden !important; /* הפקודה שחותכת פיקסלים מיותרים שגורמים לפיצול הדף */
                 transform: none !important; /* ביטול הקטנת המסך מהמובייל */
                 zoom: 1 !important; 
             }
