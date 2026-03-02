@@ -3,41 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מחולל ספרי קודש - מהדורת כסף יוקרתית</title>
+    <title>מחולל ספרי קודש - חלוקה מדויקת מחשב/טלפון</title>
     <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;700;900&family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        /* נעילת גודל פונט הבסיס כדי שהטלפון לא ינפח טקסטים באופן לא רצוי */
-        html {
-            font-size: 16px !important; 
-            -webkit-text-size-adjust: 100%; /* מכריח את הטלפון להראות פונט כמו במחשב */
-            text-size-adjust: 100%;
+        /* חסימה מוחלטת של שינויי גודל טקסט בדפדפני מובייל */
+        html, body {
+            -webkit-text-size-adjust: 100% !important;
+            -moz-text-size-adjust: 100% !important;
+            text-size-adjust: 100% !important;
+            margin: 0; padding: 0; 
+            background-color: #f8f9fa; 
+            font-family: 'Heebo', sans-serif; 
+            color: #333; 
         }
 
         :root {
-            --bg-base: #f8f9fa;
-            --bg-white: #ffffff;
             --paper: #fbf5e9; 
             --ink: #1c1104; 
             --torah-red: #5e0b0b;
         }
 
-        body { 
-            margin: 0; padding: 0; 
-            background-color: var(--bg-base); 
-            font-family: 'Heebo', sans-serif; 
-            color: #333; 
-        }
-
         /* ================== מסך בניית הספר ================== */
         #builder-screen { 
             max-width: 900px; margin: 40px auto; 
-            background-color: var(--bg-white); 
+            background-color: #ffffff; 
             padding: 50px; 
             border-radius: 12px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.08); 
             border: 1px solid #eaeaea;
-            position: relative;
         }
 
         .builder-header { text-align: center; margin-bottom: 40px; }
@@ -56,35 +50,40 @@
             background: #fff; transition: 0.3s;
         }
         .form-group textarea { resize: vertical; min-height: 80px; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #555; outline: none; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
         
         .checkbox-group { background: #fdfdfd; padding: 20px; border-radius: 6px; border: 1px dashed #bbb; }
         .checkbox-item { display: flex; align-items: center; margin-bottom: 12px; font-size: 1.1rem; font-weight: 600; font-family: 'Frank Ruhl Libre', serif; color: #222;}
         .checkbox-item input { margin-left: 12px; transform: scale(1.4); accent-color: #333; }
 
-        .chapter-item { background: #fff; border: 1px solid #ddd; padding: 12px 15px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
-        .remove-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s;}
-        .remove-btn:hover { background: #cc0000; }
+        .chapter-item { background: #fff; border: 1px solid #ddd; padding: 12px 15px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #333; }
+        .remove-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;}
 
-        .btn { background: linear-gradient(to bottom, #444, #111); color: #fff; border: none; padding: 15px 25px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-family: 'Heebo', sans-serif;}
-        .btn:hover { background: linear-gradient(to bottom, #555, #222); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
-        .btn-silver { background: linear-gradient(to bottom, #fff, #e0e0e0, #bbb); color: #111; border: 1px solid #999; width: 100%; font-size: 1.6rem; padding: 20px; margin-top: 30px; font-family: 'Frank Ruhl Libre', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
-        .btn-silver:hover { background: linear-gradient(to bottom, #fff, #f4f4f4); color: #000; }
-        .btn-outline { background: transparent; border: 2px solid #333; color: #333; box-shadow: none;}
-        .btn-outline:hover { background: #333; color: #fff; }
+        .btn { background: linear-gradient(to bottom, #444, #111); color: #fff; border: none; padding: 15px 25px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Heebo', sans-serif;}
+        .btn-silver { background: linear-gradient(to bottom, #fff, #e0e0e0, #bbb); color: #111; border: 1px solid #999; width: 100%; font-size: 1.6rem; padding: 20px; margin-top: 30px; font-family: 'Frank Ruhl Libre', serif; }
+        .btn-outline { background: transparent; border: 2px solid #333; color: #333; }
 
-        /* ================== תצוגת הספר ================== */
+        /* ================== תצוגת הספר (נעול לפיקסלים!) ================== */
         #book-reader { 
             display: none; padding: 60px 0; text-align: center; 
             background: radial-gradient(circle at center, #ffffff 0%, #d5d9e0 100%); 
             min-height: 100vh;
+            overflow-x: hidden;
         }
         .reader-controls { position: fixed; top: 20px; left: 20px; z-index: 1000; display: flex; gap: 10px; }
 
+        /* יצירת סביבה שמעגנת את כל הדפים בפיקסלים מדויקים כדי שהחלוקה תהיה זהה בטלפון ובמחשב */
+        #pages-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform-origin: top center;
+        }
+
+        /* דף A4 נעול למידות פיקסלים מוחלטות (יחס מדויק של A4) */
         .a4-page {
-            width: 210mm;
-            height: 297mm;
-            padding: 18mm; 
+            width: 794px !important; 
+            height: 1123px !important;
+            padding: 68px !important; 
             background-color: var(--paper);
             background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
             margin: 0 auto 50px auto;
@@ -94,36 +93,26 @@
             position: relative;
         }
 
-        /* --- כריכת הספר דינמית: עור שחור עמוק --- */
+        /* --- כריכת הספר דינמית --- */
         .cover-page, .back-cover-page {
             background-color: var(--cover-main, #0f0f0f);
             background-image: url('https://www.transparenttextures.com/patterns/leather.png');
             border: 2px solid #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            display: flex; align-items: center; justify-content: center; position: relative;
         }
 
         .cover-page {
             border-radius: 15px 4px 4px 15px;
-            padding: 15px 35px 15px 15px; 
-            box-shadow: 
-                inset -12px 0 25px rgba(0,0,0,0.95), 
-                inset 5px 5px 15px rgba(255,255,255,0.05),
-                30px 30px 50px rgba(0,0,0,0.5);
+            padding: 15px 35px 15px 15px !important; 
+            box-shadow: inset -12px 0 25px rgba(0,0,0,0.95), inset 5px 5px 15px rgba(255,255,255,0.05), 30px 30px 50px rgba(0,0,0,0.5);
         }
 
         .back-cover-page {
             border-radius: 4px 15px 15px 4px;
-            padding: 15px 15px 15px 35px; 
-            box-shadow: 
-                inset 12px 0 25px rgba(0,0,0,0.95), 
-                inset -5px 5px 15px rgba(255,255,255,0.05),
-                -30px 30px 50px rgba(0,0,0,0.5);
+            padding: 15px 15px 15px 35px !important; 
+            box-shadow: inset 12px 0 25px rgba(0,0,0,0.95), inset -5px 5px 15px rgba(255,255,255,0.05), -30px 30px 50px rgba(0,0,0,0.5);
         }
 
-        /* שדרה + כפלי עור */
         .cover-spine {
             position: absolute; top: 0; right: 0; bottom: 0; width: 30px;
             background: linear-gradient(to left, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.9) 100%);
@@ -134,150 +123,120 @@
             background: linear-gradient(to right, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.9) 100%);
             border-radius: 4px 0 0 4px; border-right: 2px solid rgba(0,0,0,0.8); z-index: 5;
         }
-        .spine-rib {
-            width: 100%; height: 6px; background: rgba(0,0,0,0.8);
-            box-shadow: 0 2px 2px rgba(255,255,255,0.1), 0 -2px 3px rgba(0,0,0,0.9);
-            position: absolute;
-        }
+        .spine-rib { width: 100%; height: 6px; background: rgba(0,0,0,0.8); box-shadow: 0 2px 2px rgba(255,255,255,0.1), 0 -2px 3px rgba(0,0,0,0.9); position: absolute; }
 
-        /* --- מסגרת העיטורים העיוורת --- */
         .pattern-band {
-            width: 100%; height: 100%;
-            border: 2px solid rgba(0,0,0,0.8);
-            border-radius: 8px;
+            width: 100%; height: 100%; border: 2px solid rgba(0,0,0,0.8); border-radius: 8px;
             background-color: var(--cover-dark, #050505);
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 0 Q30 10 20 20 Q10 10 20 0 M20 40 Q30 30 20 20 Q10 30 20 40 M0 20 Q10 10 20 20 Q10 30 0 20 M40 20 Q30 10 20 20 Q30 30 40 20' fill='rgba(0,0,0,0.45)' stroke='rgba(0,0,0,0.9)' stroke-width='1.5'/%3E%3Ccircle cx='20' cy='20' r='3.5' fill='rgba(0,0,0,0.7)'/%3E%3C/svg%3E"), url('https://www.transparenttextures.com/patterns/leather.png');
             box-shadow: inset 4px 4px 15px rgba(0,0,0,1), inset -2px -2px 5px rgba(255,255,255,0.03);
-            padding: 35px; 
-            box-sizing: border-box;
+            padding: 35px; box-sizing: border-box;
         }
 
         .inner-frame {
-            width: 100%; height: 100%;
-            border-radius: 4px;
-            background-color: var(--cover-main, #0f0f0f);
+            width: 100%; height: 100%; border-radius: 4px; background-color: var(--cover-main, #0f0f0f);
             background-image: url('https://www.transparenttextures.com/patterns/leather.png');
-            border: 2px solid #000;
-            box-shadow: 
-                0 0 0 3px var(--cover-dark, #050505),
-                0 0 0 6px #000,
-                0 0 0 7px rgba(255,255,255,0.08),
-                inset 5px 5px 15px rgba(0,0,0,0.9),
-                inset -2px -2px 5px rgba(255,255,255,0.05);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 30px; box-sizing: border-box; position: relative; z-index: 10;
+            border: 2px solid #000; box-shadow: 0 0 0 3px var(--cover-dark, #050505), 0 0 0 6px #000, 0 0 0 7px rgba(255,255,255,0.08), inset 5px 5px 15px rgba(0,0,0,0.9), inset -2px -2px 5px rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; box-sizing: border-box; position: relative; z-index: 10;
         }
 
         .cover-text-silver {
             background: linear-gradient(to bottom, #ffffff 0%, #d4d4d4 25%, #7a7a7a 50%, #d4d4d4 75%, #ffffff 100%);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            -webkit-text-stroke: 0.5px rgba(255,255,255,0.3);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 0.5px rgba(255,255,255,0.3);
             filter: drop-shadow(2px 3px 2px rgba(0,0,0,1)) drop-shadow(0px 0px 1px rgba(255,255,255,0.2)); 
             margin: 0; font-family: 'Frank Ruhl Libre', serif; text-align: center;
         }
 
-        .cover-title { font-size: 6.5rem; font-weight: 900; line-height: 1; margin-bottom: 20px; letter-spacing: 2px;}
-        .cover-ded-type { font-size: 2rem; font-weight: bold; margin-bottom: 5px; letter-spacing: 1px;}
-        .cover-name { font-size: 3.5rem; font-weight: bold; margin-bottom: 25px; letter-spacing: 1px;}
-        
-        .cover-ornament { 
-            width: 80px; height: 15px; margin-bottom: 40px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0 10 Q25 0 50 10 T100 10 M50 5 L55 10 L50 15 L45 10 Z' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E") no-repeat center;
-            filter: drop-shadow(2px 3px 2px rgba(0,0,0,1));
-        }
+        .cover-title { font-size: 80px; font-weight: 900; line-height: 1; margin-bottom: 20px; letter-spacing: 2px;}
+        .cover-ded-type { font-size: 30px; font-weight: bold; margin-bottom: 5px; letter-spacing: 1px;}
+        .cover-name { font-size: 55px; font-weight: bold; margin-bottom: 25px; letter-spacing: 1px;}
+        .cover-ornament { width: 80px; height: 15px; margin-bottom: 40px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0 10 Q25 0 50 10 T100 10 M50 5 L55 10 L50 15 L45 10 Z' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E") no-repeat center; filter: drop-shadow(2px 3px 2px rgba(0,0,0,1));}
 
-        /* --- מסגרות פנים --- */
+        /* --- מסגרות פנים נעולות פיקסלים --- */
         .inside-page-border {
             border: 4px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 4px;
-            height: 100%; box-sizing: border-box; padding: 30px; display: flex; flex-direction: column; position: relative;
+            width: 100%; height: 100%; box-sizing: border-box; padding: 35px; display: flex; flex-direction: column; position: relative;
         }
         .inside-page-border::before { content: ''; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px; border: 1px solid var(--ink); pointer-events: none; }
 
-        /* --- שער פנימי והקדשה --- */
-        .gate-title { font-size: 4.5rem; text-align: center; font-family: 'Frank Ruhl Libre', serif; color: var(--ink); font-weight: 900; margin-top: 20px; }
-        .gate-divider { text-align: center; font-size: 2.5rem; color: var(--torah-red); margin: 20px 0; }
-        .gate-name { text-align: center; font-size: 4rem; color: var(--torah-red); font-weight: bold; font-family: 'Frank Ruhl Libre', serif; }
-        .gate-custom-text { text-align: center; font-size: 1.4rem; color: var(--ink); font-family: 'Heebo', sans-serif; margin-top: 25px; line-height: 1.5; padding: 0 40px;}
-        .bsd-text { position: absolute; top: 20px; right: 30px; font-weight: bold; font-size: 1.3rem; font-family: 'Frank Ruhl Libre', serif; color: var(--ink); }
+        /* --- שער פנימי --- */
+        .gate-title { font-size: 70px; text-align: center; font-family: 'Frank Ruhl Libre', serif; color: var(--ink); font-weight: 900; margin-top: 20px; }
+        .gate-divider { text-align: center; font-size: 35px; color: var(--torah-red); margin: 20px 0; }
+        .gate-name { text-align: center; font-size: 60px; color: var(--torah-red); font-weight: bold; font-family: 'Frank Ruhl Libre', serif; }
+        .gate-custom-text { text-align: center; font-size: 22px; color: var(--ink); font-family: 'Heebo', sans-serif; margin-top: 25px; line-height: 1.5; padding: 0 40px;}
+        .bsd-text { position: absolute; top: 20px; right: 30px; font-weight: bold; font-size: 20px; font-family: 'Frank Ruhl Libre', serif; color: var(--ink); }
 
-        /* --- טקסט הספר --- */
-        .page-header { text-align: center; font-size: 2.4rem; font-family: 'Frank Ruhl Libre', serif; font-weight: bold; color: var(--ink); border-bottom: 3px double var(--torah-red); padding-bottom: 10px; margin-bottom: 20px; }
-        .page-content { flex-grow: 1; font-family: 'Frank Ruhl Libre', serif; font-size: 1.5rem; line-height: 2.2; text-align: justify; column-count: 2; column-gap: 50px; column-rule: 1px solid rgba(28, 17, 4, 0.3); overflow: hidden; color: var(--ink); }
-        .verse-num { font-weight: 900; color: var(--torah-red); margin-left: 8px; font-size: 1.2em; }
-        .loading-text { color: #555; font-size: 2.2rem; margin-top: 100px; font-weight: bold; font-family: 'Frank Ruhl Libre', serif;}
+        /* --- טקסט הספר (מידות מוחלטות לעימוד מדויק!) --- */
+        .page-header { text-align: center; font-size: 36px; font-family: 'Frank Ruhl Libre', serif; font-weight: bold; color: var(--ink); border-bottom: 3px double var(--torah-red); padding-bottom: 10px; margin-bottom: 20px; }
+        .page-content { 
+            flex-grow: 1; 
+            font-family: 'Frank Ruhl Libre', serif; 
+            font-size: 24px !important; /* פיקסלים מדויקים */
+            line-height: 44px !important; /* גובה שורה מדויק */
+            text-align: justify; 
+            column-count: 2; column-gap: 50px; column-rule: 1px solid rgba(28, 17, 4, 0.3); 
+            height: 780px !important; /* נעילת גובה אזור הטקסט למניעת גלישה */
+            max-height: 780px !important;
+            overflow: hidden; color: var(--ink); 
+        }
+        .verse-num { font-weight: 900; color: var(--torah-red); margin-left: 8px; font-size: 26px; }
+        .loading-text { color: #555; font-size: 35px; margin-top: 100px; font-weight: bold; font-family: 'Frank Ruhl Libre', serif;}
 
-        /* ================== התאמה לתצוגת מסך במובייל (ללא פגיעה בהדפסה) ================== */
-        @media screen and (max-width: 768px) {
+        /* ================== פתרון מובייל: הקטנה ויזואלית בלבד (זום אאוט) ================== */
+        @media screen and (max-width: 850px) {
             #builder-screen { margin: 15px; padding: 25px 20px; }
-            .builder-header h1 { font-size: 2.2rem; }
             .grid-2 { grid-template-columns: 1fr; gap: 15px; }
-            
-            #book-reader { padding: 80px 0 20px 0; overflow-x: hidden; }
+            #book-reader { padding: 80px 0 20px 0; }
             .reader-controls { top: 10px; left: 10px; right: 10px; justify-content: center; }
             .reader-controls .btn { font-size: 1rem; padding: 10px; flex: 1; }
 
-            /* כיווץ ויזואלי של הדף במסך קטן כדי שלא יצטרכו לגלול ימינה ושמאלה */
-            .a4-page {
-                transform: scale(calc((100vw - 30px) / 800));
+            /* הקסם שמסדר את הטלפון: מכווץ ויזואלית את הפיקסלים, אבל לא נוגע במתמטיקה שלהם! */
+            #pages-wrapper {
+                transform: scale(calc(100vw / 840)); /* 840 זה רוחב הדף + שוליים */
                 transform-origin: top center;
-                margin-bottom: -150px; /* קירוב הדפים בגלל ההקטנה */
             }
+            .a4-page { margin-bottom: 20px !important; }
         }
 
-        /* ================== הגדרות קשיחות לתיקון הדפסה (100% רגיל) בטלפון ובמחשב ================== */
+        /* ================== הגדרות הדפסה קשיחות (דף 1 יוצא דף 1, בלי ניפוח) ================== */
         @media print {
             @page { 
-                size: 210mm 297mm; /* הגדרה ברורה ומפורשת של מידות הנייר לדפדפן */
+                size: A4; 
                 margin: 0; 
             }
             
             body, html { 
                 background: white !important; 
-                margin: 0 !important; 
-                padding: 0 !important; 
-                width: 100% !important; 
-                height: 100% !important;
-                max-width: 100% !important;
+                margin: 0 !important; padding: 0 !important; 
+                width: 100% !important; height: 100% !important;
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
             }
             
             #builder-screen, .reader-controls { display: none !important; }
             
-            #book-reader { 
+            #book-reader, #pages-wrapper { 
                 display: block !important; 
                 background: white !important; 
-                padding: 0 !important; 
-                margin: 0 !important;
+                padding: 0 !important; margin: 0 !important;
+                transform: none !important; /* מבטל את הכיווץ של המובייל בזמן הדפסה */
                 width: 100% !important; 
             }
             
             .a4-page { 
-                /* הדף תופס בדיוק 100% מנייר ההדפסה והגובה שלו נעול - מונע גלישה ל-2 דפים וצורך ב-78% */
-                width: 100% !important; 
-                height: 297mm !important;
-                max-height: 297mm !important;
-                max-width: 210mm !important; 
+                width: 794px !important;  /* רוחב מדויק של A4 בפיקסלים */
+                height: 1123px !important; /* גובה מדויק של A4 בפיקסלים */
                 margin: 0 auto !important; 
                 box-shadow: none !important; 
                 page-break-after: always !important; 
                 page-break-inside: avoid !important; 
-                overflow: hidden !important; /* הפקודה שחותכת פיקסלים מיותרים שגורמים לפיצול הדף */
-                transform: none !important; /* ביטול הקטנת המסך מהמובייל */
-                zoom: 1 !important; 
+                overflow: hidden !important; 
+                zoom: 1 !important; /* מבטל את הצורך לשים 78% בהגדרות המדפסת! */
             }
             
-            /* הבטחת צבעי רקע וטקסטורות עור גם בהדפסה מכל מכשיר */
-            .cover-page, .back-cover-page { 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-            }
-            .cover-page::after, .back-cover-page::after { display: none !important; }
-            
-            /* המרת צבעי הטקסט בתוך הספר לשחור מלא לשם הדפסה חדה */
             .inside-page-border { border-color: #000 !important; outline-color: #000 !important; }
             .inside-page-border::before { border-color: #000 !important; }
-            .page-content, .gate-custom-text { color: #000 !important; }
-            .page-header, .verse-num, .gate-name, .gate-divider { color: #000 !important; } 
+            .page-content, .gate-custom-text, .page-header, .verse-num, .gate-name, .gate-divider { color: #000 !important; } 
         }
     </style>
 </head>
@@ -287,7 +246,7 @@
     <div id="builder-screen">
         <div class="builder-header">
             <h1>מחולל ספרי קודש וסידורים</h1>
-            <p>מהדורת כריכת עור משובחת עם מסגרת עיוורת עמוקה</p>
+            <p>חלוקה מדויקת ואחידה להדפסה - מחשב ומובייל</p>
         </div>
 
         <div class="section-title">א. עיצוב כריכות ונוסח הקדשה</div>
@@ -316,13 +275,13 @@
             <div class="form-group" style="grid-column: 1 / -1;">
                 <label>צבע עור הכריכה:</label>
                 <select id="input-cover-color">
-                    <option value="black">שחור פחם עמוק (יוקרתי - כמו בתמונה)</option>
+                    <option value="black">שחור פחם עמוק</option>
                     <option value="navy">כחול כהה מאוד</option>
                     <option value="burgundy">בורדו יין</option>
                 </select>
             </div>
             <div class="form-group" style="grid-column: 1 / -1;">
-                <label>טקסט לכריכה אחורית (הוצאה לאור / מסר קצר):</label>
+                <label>טקסט לכריכה אחורית:</label>
                 <textarea id="input-back-cover-text" placeholder="לדוגמה: הופק ונערך ברוב פאר והדר..."></textarea>
             </div>
         </div>
@@ -337,8 +296,8 @@
 
         <div class="section-title">ג. תוכן: תפילות ובקשות קבועות</div>
         <div class="checkbox-group">
-            <label class="checkbox-item"><input type="checkbox" id="check-shachar" checked> ברכות השחר (מודה אני, אשר יצר...)</label>
-            <label class="checkbox-item"><input type="checkbox" id="check-shema" checked> פרשת קריאת שמע</label>
+            <label class="checkbox-item"><input type="checkbox" id="check-shachar" checked> ברכות השחר</label>
+            <label class="checkbox-item"><input type="checkbox" id="check-shema" checked> קריאת שמע</label>
             <label class="checkbox-item"><input type="checkbox" id="check-derech" checked> תפילת הדרך</label>
         </div>
 
@@ -357,7 +316,7 @@
                 <select id="input-chapter"></select>
             </div>
             <div class="form-group" style="justify-content: flex-end;">
-                <button class="btn btn-outline" onclick="addChapterToList()">+ הוסף פרק זה לספר</button>
+                <button class="btn btn-outline" onclick="addChapterToList()">+ הוסף פרק</button>
             </div>
         </div>
 
@@ -369,10 +328,11 @@
     <!-- תצוגת הספר המעומד -->
     <div id="book-reader">
         <div class="reader-controls">
-            <button class="btn" onclick="window.print()">🖨️ הדפס / ל-PDF</button>
-            <button class="btn btn-outline" style="background: #fff;" onclick="backToBuilder()">✏️ חזור לעריכה</button>
+            <button class="btn" onclick="window.print()">🖨️ הדפס / שמור ל-PDF</button>
+            <button class="btn btn-outline" style="background: #fff;" onclick="backToBuilder()">✏️ חזור</button>
         </div>
-        <div id="pages-container"></div>
+        <!-- אלמנט העוטף שמבצע זום בטלפון בלי לפגוע במידות -->
+        <div id="pages-wrapper"></div>
     </div>
 
     <script>
@@ -481,8 +441,9 @@
             });
         }
 
+        // חישוב גלישת טקסט על בסיס הפיקסלים הנעולים
         async function buildPaginatedSection(title, itemsArray) {
-            const container = document.getElementById('pages-container');
+            const container = document.getElementById('pages-wrapper');
             let contentDiv;
 
             function createNewPage() {
@@ -506,7 +467,9 @@
                 span.innerHTML = html + '&nbsp;&nbsp;&nbsp;'; 
                 contentDiv.appendChild(span);
 
-                if (contentDiv.scrollHeight > contentDiv.clientHeight + 5 || contentDiv.scrollWidth > contentDiv.clientWidth + 5) {
+                // בגלל שגובה הדף נעול בפיקסלים, clientHeight תמיד קבוע (780px).
+                // אם הטקסט פורץ את העמודה השנייה, ה-scrollWidth גדל! זה החוק ב-CSS Columns.
+                if (contentDiv.scrollHeight > contentDiv.clientHeight + 2 || contentDiv.scrollWidth > contentDiv.clientWidth + 2) {
                     contentDiv.removeChild(span); 
                     createNewPage(); 
                     contentDiv.appendChild(span); 
@@ -518,8 +481,8 @@
             document.getElementById('builder-screen').style.display = 'none';
             document.getElementById('book-reader').style.display = 'block';
             
-            const container = document.getElementById('pages-container');
-            container.innerHTML = '<div class="loading-text">מעצב את דפי הספר, נא להמתין...</div>';
+            const container = document.getElementById('pages-wrapper');
+            container.innerHTML = '<div class="loading-text">מסדר את הדפים להדפסה מושלמת...</div>';
 
             await new Promise(r => setTimeout(r, 100));
 
@@ -566,14 +529,14 @@
                         <div class="bsd-text">בס"ד</div>
                         <div class="gate-title">${bookTitle}</div>
                         <div class="gate-divider">❧ ═════ ❖ ═════ ☙</div>
-                        <div style="text-align: center; font-size: 2rem; font-family: 'Frank Ruhl Libre', serif; font-weight: bold; margin-bottom: 10px; color: var(--ink);">${dedType}</div>
+                        <div style="text-align: center; font-size: 30px; font-family: 'Frank Ruhl Libre', serif; font-weight: bold; margin-bottom: 10px; color: var(--ink);">${dedType}</div>
                         <div class="gate-name">${personName}</div>
                         ${customText ? `<div class="gate-custom-text">${customText}</div>` : ''}
                     </div>
                 </div>
             `;
 
-            // 3. סידור
+            // 3. תפילות בסיס
             if(document.getElementById('check-shachar').checked) {
                 await buildPaginatedSection("ברכות השחר", siddurTexts.shachar.map(t => `<p style="margin:0 0 10px 0">${t}</p>`));
             }
@@ -613,7 +576,7 @@
                         <div class="inner-frame">
                             <div style="margin: auto 0; text-align: center; width: 80%;">
                                 <div class="cover-ornament"></div>
-                                <h3 class="cover-text-silver" style="font-size: 1.8rem; font-weight: normal; line-height: 1.6;">${backCoverText}</h3>
+                                <h3 class="cover-text-silver" style="font-size: 30px; font-weight: normal; line-height: 1.6;">${backCoverText}</h3>
                                 <div class="cover-ornament" style="margin-top: 40px; transform: scaleY(-1);"></div>
                             </div>
                         </div>
